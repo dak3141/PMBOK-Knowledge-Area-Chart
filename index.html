@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Interactive PMBOK Process Chart with Dropdowns</title>
+    <title>Interactive PMBOK Chart (Preview & Edit Modes)</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -31,7 +31,7 @@
             gap: 8px;
         }
         .grid-header, .grid-cell, .ka-header {
-            padding: 12px;
+            padding: 8px;
             border-radius: 8px;
             background-color: white;
             box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
@@ -41,134 +41,54 @@
             min-height: 100px;
         }
         .grid-header {
-            font-weight: 600;
-            text-align: center;
             background-color: #e0e7ff;
             justify-content: center;
         }
         .ka-header {
-            font-weight: 600;
             background-color: #eef2ff;
             justify-content: center;
-            text-align: center;
         }
-        .process-item {
-            font-size: 0.875rem;
-            margin-bottom: 8px;
-            border-radius: 6px;
-            border: 1px solid #e5e7eb;
-            overflow: hidden;
+        /* Editable Mode Styles */
+        .editable-area {
+            width: 100%; border: none; padding: 6px; font-family: inherit; font-size: 0.9rem;
+            resize: none; overflow: hidden; background-color: transparent; border-radius: 4px;
         }
-        .process-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 8px;
-            cursor: pointer;
-            background-color: #f9fafb;
-            transition: background-color 0.2s;
+        .editable-area:focus {
+            outline: 2px solid #4f46e5; background-color: #fefcbf;
         }
-        .process-header:hover {
-            background-color: #f3f4f6;
+        .header-editable {
+            font-weight: 600; text-align: center; font-size: 1rem;
         }
-        .process-title {
-            flex-grow: 1;
-        }
-        .process-number {
-            color: #6b7280;
-            font-size: 0.75rem;
-            margin-right: 6px;
-        }
-        .info-btn {
-            margin-left: 8px;
-            color: #4f46e5;
-            cursor: pointer;
-            font-weight: bold;
-            border-radius: 50%;
-            width: 20px;
-            height: 20px;
-            display: inline-flex;
-            justify-content: center;
-            align-items: center;
-            background-color: #e0e7ff;
-            flex-shrink: 0;
-        }
-        .info-btn:hover {
-            background-color: #c7d2fe;
-        }
-        .outputs-container {
-            max-height: 0;
-            overflow: hidden;
-            transition: max-height 0.5s ease-in-out;
-            background-color: white;
-        }
-        .outputs-container.open {
-            max-height: 400px; /* Set a max-height for the animation */
-            overflow-y: auto; /* Make it scrollable if content exceeds max-height */
-        }
-        .ito-section {
-            padding: 8px 12px;
-        }
-        .ito-header {
-            font-weight: 600;
-            font-size: 0.85rem;
-            color: #1f2937;
-            margin-top: 8px;
-            margin-bottom: 4px;
-            border-bottom: 1px solid #e5e7eb;
-            padding-bottom: 4px;
-        }
-        .ito-section:first-child .ito-header {
-            margin-top: 0;
-        }
-        .outputs-list {
-            list-style-position: inside;
-            padding: 0;
-            font-size: 0.8rem;
-            color: #374151;
-        }
-        .outputs-list li {
-            margin-bottom: 4px;
-            padding-left: 5px;
-        }
-        #aiModal {
-            transition: opacity 0.3s ease;
-        }
-        .spinner {
-            border-top-color: #4f46e5;
-            animation: spin 1s linear infinite;
-        }
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
+        .process-title-editable { font-weight: 500; }
+        .ito-editable { font-size: 0.8rem; line-height: 1.5; min-height: 80px; }
+
+        /* Preview Mode Styles */
+        .process-item { font-size: 0.875rem; margin-bottom: 8px; border-radius: 6px; border: 1px solid #e5e7eb; overflow: hidden; }
+        .process-header { display: flex; justify-content: space-between; align-items: center; padding: 8px; cursor: pointer; background-color: #f9fafb; transition: background-color 0.2s; }
+        .process-header:hover { background-color: #f3f4f6; }
+        .process-title { flex-grow: 1; }
+        .process-number { color: #6b7280; font-size: 0.75rem; margin-right: 6px; }
+        .info-btn { margin-left: 8px; color: #4f46e5; cursor: pointer; font-weight: bold; border-radius: 50%; width: 20px; height: 20px; display: inline-flex; justify-content: center; align-items: center; background-color: #e0e7ff; flex-shrink: 0; }
+        .info-btn:hover { background-color: #c7d2fe; }
+        .outputs-container { max-height: 0; overflow: hidden; transition: max-height 0.5s ease-in-out; background-color: white; }
+        .outputs-container.open { max-height: 400px; overflow-y: auto; }
+        .ito-section { padding: 8px 12px; }
+        .ito-header { font-weight: 600; font-size: 0.85rem; color: #1f2937; margin-top: 8px; margin-bottom: 4px; border-bottom: 1px solid #e5e7eb; padding-bottom: 4px; }
+        .ito-section:first-child .ito-header { margin-top: 0; }
+        .outputs-list { list-style-position: inside; padding: 0; font-size: 0.8rem; color: #374151; }
+        .outputs-list li { margin-bottom: 4px; padding-left: 5px; }
+        
+        #aiModal { transition: opacity 0.3s ease; }
+        .spinner { border-top-color: #4f46e5; animation: spin 1s linear infinite; }
+        @keyframes spin { to { transform: rotate(360deg); } }
 
         @media (max-width: 1024px) {
-            .grid-container {
-                grid-template-columns: 1fr;
-            }
-            .grid-header, .ka-header {
-                grid-column: 1 / -1;
-            }
-            .grid-header:not(:first-child){
-                display: none;
-            }
-            .ka-header {
-                margin-top: 1rem;
-            }
-            .grid-cell {
-                border-left: 3px solid #e0e7ff;
-                padding-left: 20px;
-                position: relative;
-            }
-            .grid-cell::before {
-                content: attr(data-process-group);
-                position: absolute;
-                top: -20px;
-                left: 0;
-                font-weight: 600;
-                color: #4338ca;
-                font-size: 0.8rem;
-            }
+            .grid-container { grid-template-columns: 1fr; }
+            .grid-header, .ka-header { grid-column: 1 / -1; }
+            .grid-header:not(:first-child){ display: none; }
+            .ka-header { margin-top: 1rem; }
+            .grid-cell { border-left: 3px solid #e0e7ff; padding-left: 20px; position: relative; }
+            .grid-cell::before { content: attr(data-process-group); position: absolute; top: -20px; left: 0; font-weight: 600; color: #4338ca; font-size: 0.8rem; }
         }
     </style>
 </head>
@@ -179,28 +99,36 @@
         <div class="flex flex-col md:flex-row justify-between items-center mb-6">
             <div>
                 <h1 class="text-2xl md:text-3xl font-bold text-gray-800" data-lang-en="PMBOK Process Chart" data-lang-am="PMBOK Գործընթացների Աղյուսակ">PMBOK Process Chart</h1>
-                <p class="text-gray-500 mt-1" data-lang-en="Click on a process to see its outputs." data-lang-am="Սեղմեք պրոցեսի վրա՝ արդյունքները տեսնելու համար։">Click on a process to see its outputs.</p>
+                <p id="subtitle" class="text-gray-500 mt-1" data-lang-en="Click on a process to see its outputs." data-lang-am="Սեղմեք պրոցեսի վրա՝ արդյունքները տեսնելու համար։">Click on a process to see its outputs.</p>
             </div>
-            <div class="flex items-center space-x-4 mt-4 md:mt-0 w-full md:w-auto">
-                <input type="text" id="searchInput" placeholder="Search processes..." class="w-full md:w-48 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500">
-                <div class="flex items-center space-x-2">
-                    <span class="text-sm font-medium text-gray-700">AM</span>
-                    <div class="relative inline-block w-10 mr-2 align-middle select-none transition duration-200 ease-in">
-                        <input type="checkbox" name="toggle" id="languageToggle" class="toggle-checkbox absolute block w-6 h-6 rounded-full bg-white border-4 appearance-none cursor-pointer"/>
-                        <label for="languageToggle" class="toggle-label block overflow-hidden h-6 rounded-full bg-gray-300 cursor-pointer"></label>
+            <div class="flex items-center space-x-4 mt-4 md:mt-0">
+                <div id="previewControls" class="flex items-center space-x-4">
+                    <input type="text" id="searchInput" placeholder="Search..." class="w-full md:w-48 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                    <div class="flex items-center space-x-2">
+                        <span class="text-sm font-medium text-gray-700">AM</span>
+                        <div class="relative inline-block w-10 align-middle select-none">
+                            <input type="checkbox" name="lang-toggle" id="languageToggle" class="toggle-checkbox absolute block w-6 h-6 rounded-full bg-white border-4 appearance-none cursor-pointer"/>
+                            <label for="languageToggle" class="toggle-label block overflow-hidden h-6 rounded-full bg-gray-300 cursor-pointer"></label>
+                        </div>
+                        <span class="text-sm font-medium text-gray-700">EN</span>
                     </div>
-                    <span class="text-sm font-medium text-gray-700">EN</span>
+                </div>
+                 <div class="flex items-center space-x-2 border-l pl-4 ml-4">
+                    <span class="text-sm font-medium text-gray-700">Preview</span>
+                    <div class="relative inline-block w-10 align-middle select-none">
+                        <input type="checkbox" name="mode-toggle" id="modeToggle" class="toggle-checkbox absolute block w-6 h-6 rounded-full bg-white border-4 appearance-none cursor-pointer"/>
+                        <label for="modeToggle" class="toggle-label block overflow-hidden h-6 rounded-full bg-gray-300 cursor-pointer"></label>
+                    </div>
+                    <span class="text-sm font-medium text-gray-700">Edit</span>
                 </div>
             </div>
         </div>
 
         <!-- Main Grid -->
-        <div id="pmbokGrid" class="grid-container">
-            <!-- Grid will be generated by JS -->
-        </div>
+        <div id="pmbokGrid" class="grid-container"></div>
     </div>
 
-    <!-- AI Explanation Modal -->
+    <!-- AI Explanation Modal (Only for Preview Mode) -->
     <div id="aiModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50 flex items-center justify-center hidden pointer-events-none opacity-0">
         <div class="relative mx-auto p-5 border w-full max-w-2xl shadow-lg rounded-md bg-white">
             <div class="mt-3">
@@ -224,27 +152,28 @@
     </div>
 
     <script>
-        // --- DATA (with full ITOs for Integration, Scope, Schedule, Cost, Resource, Communications, and Stakeholder Management) ---
+        // --- DATA (Full data for preview mode) ---
         const pmbokData = {
-            processGroups: { en: ["Initiating", "Planning", "Executing", "Monitoring & Controlling", "Closing"], am: ["Նախաձեռնում", "Պլանավորում", "Իրականացում", "Մոնիթորինգ և վերահսկում", "Փակում"] },
-            knowledgeAreas: [
+             processGroups: { en: ["Initiating", "Planning", "Executing", "Monitoring & Controlling", "Closing"], am: ["Նախաձեռնում", "Պլանավորում", "Իրականացում", "Մոնիթորինգ և վերահսկում", "Փակում"] },
+             knowledgeAreas: [
                 { name: { en: "Integration Management", am: "Ինտեգրացիոն կառավարում" }, processes: { 0: [{ id: "1.1", en: "Develop Project Charter", am: "Նախագծի մեկնարկային փաստաթղթի մշակում", inputs_en: ["Business Documents", "Agreements", "EEFs", "OPAs"], inputs_am: ["Բիզնես փաստաթղթեր", "Պայմանագրեր", "EEFs", "OPAs"], tools_en: ["Expert Judgment", "Data Gathering", "Interpersonal and Team Skills", "Meetings"], tools_am: ["Փորձագիտական կարծիք", "Տվյալների հավաքագրում", "Միջանձնային և թիմային հմտություններ", "Հանդիպումներ"], outputs_en: ["Project Charter", "Assumption Log"], outputs_am: ["Նախագծի մեկնարկային փաստաթուղթ", "Ենթադրությունների գրանցամատյան (Assumption log)"] }], 1: [{ id: "1.2", en: "Develop Project Management Plan", am: "Նախագծի կառավարման պլանի մշակում", inputs_en: ["Project Charter", "Outputs from other processes", "EEFs", "OPAs"], inputs_am: ["Նախագծի մեկնարկային փաստաթուղթ", "Այլ գործընթացների Ելքեր", "EEFs", "OPAs"], tools_en: ["Expert Judgment", "Data Gathering", "Interpersonal and Team Skills", "Meetings"], tools_am: ["Փորձագիտական կարծիք", "Տվյալների հավաքագրում", "Միջանձնային և թիմային հմտություններ", "Հանդիպումներ"], outputs_en: ["Project Management Plan"], outputs_am: ["Նախագծի կառավարման պլան"] }], 2: [{ id: "1.3", en: "Direct and Manage Project Work", am: "Նախագծի աշխատանքների ղեկավարում և կառավարում", inputs_en: ["Project Management Plan", "Project Documents", "Approved Change Requests", "EEFs", "OPAs"], inputs_am: ["Նախագծի կառավարման պլան", "Նախագծի փաստաթղթեր", "Հաստատված փոփոխությունների պահանջներ", "EEFs", "OPAs"], tools_en: ["Expert Judgment", "Project Management Information System", "Meetings"], tools_am: ["Փորձագիտական կարծիք", "Նախագծի կառավարման տեղեկատվական համակարգ", "Հանդիպումներ"], outputs_en: ["Deliverables", "Work Performance Data", "Issue Log", "Change Requests", "Project Management Plan Updates", "Project Documents Updates", "OPA Updates"], outputs_am: ["Արդյունքներ (Deliverables)", "Աշխատանքի կատարողականի տվյալներ", "Խնդիրների գրանցամատյան", "Փոփոխությունների պահանջներ", "Նախագծի կառավարման պլանի թարմացումներ", "Նախագծի փաստաթղթերի թարմացումներ", "OPAs-ի փոփոխություններ"] }, { id: "1.4", en: "Manage Project Knowledge", am: "Նախագծի գիտելիքների կառավարում", inputs_en: ["Project Management Plan", "Project Documents", "Deliverables", "EEFs", "OPAs"], inputs_am: ["Նախագծի կառավարման պլան", "Նախագծի փաստաթղթեր", "Արդյունքներ (Deliverables)", "EEFs", "OPAs"], tools_en: ["Expert Judgment", "Knowledge Management", "Information Management", "Interpersonal and Team Skills"], tools_am: ["Փորձագիտական կարծիք", "Գիտելիքի կառավարում", "Տեղեկատվության կառավարում", "Միջանձնային և թիմային հմտություններ"], outputs_en: ["Lessons Learned Register", "Project Management Plan Updates", "OPA Updates"], outputs_am: ["Քաղված դասերի գրանցամատյան", "Նախագծի կառավարման պլանի փոփոխություններ", "OPAs-ի փոփոխություններ"] }], 3: [{ id: "1.5", en: "Monitor and Control Project Work", am: "Նախագծի աշխատանքների մոնիթորինգ և վերահսկում", inputs_en: ["Project Management Plan", "Project Documents", "Work Performance Information", "Agreements", "EEFs", "OPAs"], inputs_am: ["Նախագծի կառավարման պլան", "Նախագծի փաստաթղթեր", "Աշխատանքի կատարողականի վերաբերյալ տեղեկատվություն", "Պայմանագրեր", "EEFs", "OPAs"], tools_en: ["Expert Judgment", "Data Analysis", "Decision Making", "Meetings"], tools_am: ["Փորձագիտական կարծիք", "Տվյալների վերլուծություն", "Որոշումների կայացում", "Հանդիպումներ"], outputs_en: ["Work Performance Reports", "Change Requests", "Project Management Plan Updates", "Project Documents Updates"], outputs_am: ["Աշխատանքի կատարողականի հաշվետվություններ", "Փոփոխությունների պահանջներ", "Նախագծի կառավարման պլանի փոփոխություններ", "Նախագծի փաստաթղթերի փոփոխություններ"] }, { id: "1.6", en: "Perform Integrated Change Control", am: "Փոփոխությունների ինտեգրված վերահսկման իրականացում", inputs_en: ["Project Management Plan", "Project Documents", "Work Performance Reports", "Change Requests", "EEFs", "OPAs"], inputs_am: ["Նախագծի կառավարման պլան", "Նախագծի փաստաթղթեր", "Աշխատանքի կատարողականի հաշվետվություններ", "Փոփոխությունների պահանջներ", "EEFs", "OPAs"], tools_en: ["Expert Judgment", "Change Control Tools", "Data Analysis", "Decision Making", "Meetings"], tools_am: ["Փորձագիտական կարծիք", "Փոփոխությունների վերահսկման գործիքներ", "Տվյալների վերլուծություն", "Որոշումների կայացում", "Հանդիպումներ"], outputs_en: ["Approved Change Requests", "Project Management Plan Updates", "Project Documents Updates"], outputs_am: ["Հաստատված փոփոխությունների պահանջներ", "Նախագծի կառավարման պլանի թարմացումներ", "Նախագծի փաստաթղթերի փոփոխություններ"] }], 4: [{ id: "1.7", en: "Close Project or Phase", am: "Նախագծի կամ փուլի փակում", inputs_en: ["Project Charter", "Project Management Plan", "Project Documents", "Accepted Deliverables", "Business Documents", "Agreements", "Procurement Documentation", "OPAs"], inputs_am: ["Նախագծի մեկնարկային փաստաթուղթ", "Նախագծի կառավարման պլան", "Նախագծի փաստաթղթեր", "Ընդունված արդյունքներ (deliverables)", "Բիզնես փաստաթղթեր", "Պայմանագրեր", "Գնումների փաստաթղթեր", "OPAs"], tools_en: ["Expert Judgment", "Data Analysis", "Meetings"], tools_am: ["Փորձագիտական կարծիք", "Տվյալների վերլուծություն", "Հանդիպումներ"], outputs_en: ["Project Documents Updates", "Final Product, Service, or Result Transition", "Final Report", "OPA Updates"], outputs_am: ["Նախագծի փաստաթղթերի փոփոխություններ", "Վերջնական արտադրանքի, ծառայության կամ արդյունքի հանձնում", "Վերջնական հաշվետվություն", "OPAs-ի փոփոխություններ"] }] } },
-                { name: { en: "Scope Management", am: "Շրջանակի կառավարում" }, processes: { 1: [{ id: "2.1", en: "Plan Scope Management", am: "Շրջանակի կառավարման պլանավորում", inputs_en: ["Project Charter", "Project Management Plan", "Enterprise Environmental Factors", "Organizational Process Assets"], inputs_am: ["Նախագծի մեկնարկային փաստաթուղթ", "Նախագծի կառավարման պլան", "EEFs", "OPAs"], tools_en: ["Expert Judgment", "Data Analysis", "Meetings"], tools_am: ["Փորձագիտական կարծիք", "Տվյալների վերլուծություն", "Հանդիպումներ"], outputs_en: ["Scope Management Plan", "Requirements Management Plan"], outputs_am: ["Շրջանակի կառավարման պլան", "Պահանջների կառավարման պլան"] }, { id: "2.2", en: "Collect Requirements", am: "Պահանջների հավաքագրում", inputs_en: ["Project Charter", "Project Management Plan", "Project Documents", "Business Documents", "Agreements", "EEFs", "OPAs"], inputs_am: ["Նախագծի մեկնարկային փաստաթուղթ", "Նախագծի կառավարման պլան", "Նախագծի փաստաթղթեր", "Բիզնես փաստաթղթեր", "Պայմանագրեր", "EEFs", "OPAs"], tools_en: ["Expert Judgment", "Data Gathering", "Data Analysis", "Decision Making", "Data Representation", "Interpersonal and Team Skills", "Context Diagrams", "Prototypes"], tools_am: ["Փորձագիտական կարծիք", "Տվյալների հավաքագրում", "Տվյալների վերլուծություն", "Որոշումների կայացում", "Տվյալների ներկայացում", "Միջանձնային և թիմային հմտություններ", "Համատեքստային դիագրամներ", "Նախատիպեր"], outputs_en: ["Requirements Documentation", "Requirements Traceability Matrix"], outputs_am: ["Պահանջների փաստաթղթավորում", "Պահանջների համապատասխանության մատրիցա"] }, { id: "2.3", en: "Define Scope", am: "Շրջանակի սահմանում", inputs_en: ["Project Charter", "Project Management Plan", "Project Documents", "EEFs", "OPAs"], inputs_am: ["Նախագծի մեկնարկային փաստաթուղթ", "Նախագծի կառավարման պլան", "Նախագծի փաստաթղթեր", "EEFs", "OPAs"], tools_en: ["Expert Judgment", "Data Analysis", "Decision Making", "Interpersonal and Team Skills", "Product Analysis"], tools_am: ["Փորձագիտական կարծիք", "Տվյալների վերլուծություն", "Որոշումների կայացում", "Միջանձնային և թիմային հմտություններ", "Արտադրանքի վերլուծություն"], outputs_en: ["Project Scope Statement", "Project Documents Updates"], outputs_am: ["Նախագծի շրջանակի նկարագրություն", "Նախագծի փաստաթղթերի փոփոխություններ"] }, { id: "2.4", en: "Create WBS", am: "Աշխատանքների բաշխման կառուցվածքի (WBS) ստեղծում", inputs_en: ["Project Management Plan", "Project Documents", "EEFs", "OPAs"], inputs_am: ["Նախագծի կառավարման պլան", "Նախագծի փաստաթղթեր", "EEFs", "OPAs"], tools_en: ["Expert Judgment", "Decomposition"], tools_am: ["Փորձագիտական կարծիք", "Դեկոմպոզիցիա"], outputs_en: ["Scope Baseline", "Project Documents Updates"], outputs_am: ["Նախագծի շրջանակի բազային տարբերակ (Baseline)", "Նախագծի փաստաթղթերի փոփոխություններ"] }], 3: [{ id: "2.5", en: "Validate Scope", am: "Շրջանակի (կատարված աշխատանքների) հաստատում", inputs_en: ["Project Management Plan", "Project Documents", "Verified Deliverables", "Work Performance Data"], inputs_am: ["Նախագծի կառավարման պլան", "Նախագծի փաստաթղթեր", "Հաստատված (ստուգված) արդյունքներ", "Աշխատանքի կատարման տվյալներ"], tools_en: ["Inspection", "Decision Making"], tools_am: ["Ստուգում / Զննում", "Որոշումների կայացում"], outputs_en: ["Accepted Deliverables", "Work Performance Information", "Change Requests", "Project Documents Updates"], outputs_am: ["Ընդունված արդյունքներ", "Աշխատանքի կատարման վերաբերյալ տեղեկատվություն", "Փոփոխությունների պահանջներ", "Նախագծի փաստաթղթերի փոփոխություններ"] }, { id: "2.6", en: "Control Scope", am: "Շրջանակի վերահսկում", inputs_en: ["Project Management Plan", "Project Documents", "Work Performance Data", "OPAs"], inputs_am: ["Նախագծի կառավարման պլան", "Նախագծի փաստաթղթեր", "Աշխատանքի կատարման տվյալներ", "OPAs"], tools_en: ["Data Analysis"], tools_am: ["Տվյալների վերլուծություն"], outputs_en: ["Work Performance Information", "Change Requests", "Project Management Plan Updates", "Project Documents Updates"], outputs_am: ["Աշխատանքի կատարման վերաբերյալ տեղեկատվություն", "Փոփոխությունների պահանջներ", "Նախագծի կառավարման պլանի փոփոխություններ", "Նախագծի փաստաթղթերի փոփոխություններ"] }] } },
+                { name: { en: "Scope Management", am: "Ծավալի կառավարում" }, processes: { 1: [{ id: "2.1", en: "Plan Scope Management", am: "Ծավալի կառավարման պլանավորում", inputs_en: ["Project Charter", "Project Management Plan", "Enterprise Environmental Factors", "Organizational Process Assets"], inputs_am: ["Նախագծի մեկնարկային փաստաթուղթ", "Նախագծի կառավարման պլան", "EEFs", "OPAs"], tools_en: ["Expert Judgment", "Data Analysis", "Meetings"], tools_am: ["Փորձագիտական կարծիք", "Տվյալների վերլուծություն", "Հանդիպումներ"], outputs_en: ["Scope Management Plan", "Requirements Management Plan"], outputs_am: ["Ծավալի կառավարման պլան", "Պահանջների կառավարման պլան"] }, { id: "2.2", en: "Collect Requirements", am: "Պահանջների հավաքագրում", inputs_en: ["Project Charter", "Project Management Plan", "Project Documents", "Business Documents", "Agreements", "EEFs", "OPAs"], inputs_am: ["Նախագծի մեկնարկային փաստաթուղթ", "Նախագծի կառավարման պլան", "Նախագծի փաստաթղթեր", "Բիզնես փաստաթղթեր", "Պայմանագրեր", "EEFs", "OPAs"], tools_en: ["Expert Judgment", "Data Gathering", "Data Analysis", "Decision Making", "Data Representation", "Interpersonal and Team Skills", "Context Diagrams", "Prototypes"], tools_am: ["Փորձագիտական կարծիք", "Տվյալների հավաքագրում", "Տվյալների վերլուծություն", "Որոշումների կայացում", "Տվյալների ներկայացում", "Միջանձնային և թիմային հմտություններ", "Համատեքստային դիագրամներ", "Նախատիպեր"], outputs_en: ["Requirements Documentation", "Requirements Traceability Matrix"], outputs_am: ["Պահանջների փաստաթղթավորում", "Պահանջների համապատասխանության մատրիցա"] }, { id: "2.3", en: "Define Scope", am: "Ծավալի սահմանում", inputs_en: ["Project Charter", "Project Management Plan", "Project Documents", "EEFs", "OPAs"], inputs_am: ["Նախագծի մեկնարկային փաստաթուղթ", "Նախագծի կառավարման պլան", "Նախագծի փաստաթղթեր", "EEFs", "OPAs"], tools_en: ["Expert Judgment", "Data Analysis", "Decision Making", "Interpersonal and Team Skills", "Product Analysis"], tools_am: ["Փորձագիտական կարծիք", "Տվյալների վերլուծություն", "Որոշումների կայացում", "Միջանձնային և թիմային հմտություններ", "Արտադրանքի վերլուծություն"], outputs_en: ["Project Scope Statement", "Project Documents Updates"], outputs_am: ["Նախագծի շրջանակի նկարագրություն", "Նախագծի փաստաթղթերի փոփոխություններ"] }, { id: "2.4", en: "Create WBS", am: "Աշխատանքների բաշխման կառուցվածքի (WBS) ստեղծում", inputs_en: ["Project Management Plan", "Project Documents", "EEFs", "OPAs"], inputs_am: ["Նախագծի կառավարման պլան", "Նախագծի փաստաթղթեր", "EEFs", "OPAs"], tools_en: ["Expert Judgment", "Decomposition"], tools_am: ["Փորձագիտական կարծիք", "Դեկոմպոզիցիա"], outputs_en: ["Scope Baseline", "Project Documents Updates"], outputs_am: ["Նախագծի շրջանակի բազային տարբերակ (Baseline)", "Նախագծի փաստաթղթերի փոփոխություններ"] }], 3: [{ id: "2.5", en: "Validate Scope", am: "Շրջանակի (կատարված աշխատանքների) հաստատում", inputs_en: ["Project Management Plan", "Project Documents", "Verified Deliverables", "Work Performance Data"], inputs_am: ["Նախագծի կառավարման պլան", "Նախագծի փաստաթղթեր", "Հաստատված (ստուգված) արդյունքներ", "Աշխատանքի կատարման տվյալներ"], tools_en: ["Inspection", "Decision Making"], tools_am: ["Ստուգում / Զննում", "Որոշումների կայացում"], outputs_en: ["Accepted Deliverables", "Work Performance Information", "Change Requests", "Project Documents Updates"], outputs_am: ["Ընդունված արդյունքներ", "Աշխատանքի կատարման վերաբերյալ տեղեկատվություն", "Փոփոխությունների պահանջներ", "Նախագծի փաստաթղթերի փոփոխություններ"] }, { id: "2.6", en: "Control Scope", am: "Շրջանակի վերահսկում", inputs_en: ["Project Management Plan", "Project Documents", "Work Performance Data", "OPAs"], inputs_am: ["Նախագծի կառավարման պլան", "Նախագծի փաստաթղթեր", "Աշխատանքի կատարման տվյալներ", "OPAs"], tools_en: ["Data Analysis"], tools_am: ["Տվյալների վերլուծություն"], outputs_en: ["Work Performance Information", "Change Requests", "Project Management Plan Updates", "Project Documents Updates"], outputs_am: ["Աշխատանքի կատարման վերաբերյալ տեղեկատվություն", "Փոփոխությունների պահանջներ", "Նախագծի կառավարման պլանի փոփոխություններ", "Նախագծի փաստաթղթերի փոփոխություններ"] }] } },
                 { name: { en: "Schedule Management", am: "Ժամանակացույցի կառավարում" }, processes: { 1: [{ id: "3.1", en: "Plan Schedule Management", am: "Ժամանակացույցի կառավարման պլանավորում", inputs_en: ["Project Charter", "Project Management Plan", "EEFs", "OPAs"], inputs_am: ["Նախագծի մեկնարկային փաստաթուղթ", "Նախագծի կառավարման պլան", "EEFs", "OPAs"], tools_en: ["Expert Judgment", "Data Analysis", "Meetings"], tools_am: ["Փորձագիտական կարծիք", "Տվյալների վերլուծություն", "Հանդիպումներ"], outputs_en: ["Schedule Management Plan"], outputs_am: ["Ժամանակացույցի կառավարման պլան"] }, { id: "3.2", en: "Define Activities", am: "Գործողությունների սահմանում", inputs_en: ["Project Management Plan", "EEFs", "OPAs"], inputs_am: ["Նախագծի կառավարման պլան", "EEFs", "OPAs"], tools_en: ["Expert Judgment", "Decomposition", "Rolling Wave Planning", "Meetings"], tools_am: ["Փորձագիտական կարծիք", "Դեկոմպոզիցիա", "Սահող պլանավորում", "Հանդիպումներ"], outputs_en: ["Activity List", "Activity Attributes", "Milestone List", "Change Requests", "PMP Updates"], outputs_am: ["Գործողությունների ցանկ", "Գործողությունների բնութագրեր", "Հիմնական փուլերի (Milestone) ցանկ", "Փոփոխությունների պահանջներ", "Նախագծի կառավարման պլանի փոփոխություններ"] }, { id: "3.3", en: "Sequence Activities", am: "Գործողությունների հաջորդականության սահմանում", inputs_en: ["Project Management Plan", "Project Documents", "EEFs", "OPAs"], inputs_am: ["Նախագծի կառավարման պլան", "Նախագծի փաստաթղթեր", "EEFs", "OPAs"], tools_en: ["Precedence Diagramming Method", "Dependency Determination and Integration", "Leads and Lags", "PMIS"], tools_am: ["Հաջորդականությունների որոշման մեթոդ", "Կախվածությունների որոշում և ինտեգրում", "Առաջանցումներ և հետաձգումներ (Leads and Lags)", "Նախագծի կառավարման տեղեկատվական համակարգ"], outputs_en: ["Project Schedule Network Diagrams", "Project Documents Updates"], outputs_am: ["Նախագծի ժամանակացույցի ցանցային դիագրամներ", "Նախագծի փաստաթղթերի փոփոխություններ"] }, { id: "3.4", en: "Estimate Activity Durations", am: "Գործողությունների տևողությունների գնահատում", inputs_en: ["Project Management Plan", "Project Documents", "EEFs", "OPAs"], inputs_am: ["Նախագծի կառավարման պլան", "Նախագծի փաստաթղթեր", "EEFs", "OPAs"], tools_en: ["Expert Judgment", "Analogous Estimating", "Parametric Estimating", "Three-Point Estimating", "Bottom-up Estimating", "Data Analysis", "Decision Making", "Meetings"], tools_am: ["Փորձագիտական կարծիք", "Անալոգային գնահատում", "Պարամետրիկ գնահատում", "Երեք կետի գնահատում", "Ներքևից վերև գնահատում", "Տվյալների վերլուծություն", "Որոշումների կայացում", "Հանդիպումներ"], outputs_en: ["Duration Estimates", "Basis of Estimates", "Project Documents Updates"], outputs_am: ["Տևողության գնահատումներ", "Գնահատումների հիմնավորումներ", "Նախագծի փաստաթղթերի փոփոխություններ"] }, { id: "3.5", en: "Develop Schedule", am: "Ժամանակացույցի մշակում", inputs_en: ["Project Management Plan", "Project Documents", "Agreements", "EEFs", "OPAs"], inputs_am: ["Նախագծի կառավարման պլան", "Նախագծի փաստաթղթեր", "Պայմանագրեր", "EEFs", "OPAs"], tools_en: ["Schedule Network Analysis", "Critical Path Method", "Resource Optimization", "Data Analysis", "Leads and Lags", "Schedule Compression", "PMIS", "Agile Release Planning"], tools_am: ["Ժամանակացույցի ցանցային վերլուծություն", "Կրիտիկական ուղու մեթոդ", "Ռեսուրսների օպտիմիզացում", "Տվյալների վերլուծություն", "Առաջանցումներ և հետաձգումներ", "Ժամանակացույցի սեղմում", "Նախագծի կառավարման տեղեկատվական համակարգ", "Agile թողարկման պլանավորում"], outputs_en: ["Schedule Baseline", "Project Schedule", "Schedule Data", "Project Calendars", "Change Requests", "PMP Updates", "Project Documents Updates"], outputs_am: ["Ժամանակացույցի բազային տարբերակ", "Նախագծի ժամանակացույց", "Ժամանակացույցի տվյալներ", "Նախագծի օրացույցներ", "Փոփոխությունների պահանջներ", "Նախագծի կառավարման պլանի փոփոխություններ", "Նախագծի փաստաթղթերի փոփոխություններ"] }], 3: [{ id: "3.6", en: "Control Schedule", am: "Ժամանակացույցի վերահսկում", inputs_en: ["Project Management Plan", "Project Documents", "Work Performance Data", "OPAs"], inputs_am: ["Նախագծի կառավարման պլան", "Նախագծի փաստաթղթեր", "Աշխատանքի կատարողականի տվյալներ", "OPAs"], tools_en: ["Data Analysis", "Critical Path Method", "PMIS", "Resource Optimization", "Leads and Lags", "Schedule Compression"], tools_am: ["Տվյալների վերլուծություն", "Կրիտիկական ուղու մեթոդ", "Նախագծի կառավարման տեղեկատվական համակարգ", "Ռեսուրսների օպտիմիզացում", "Առաջանցումներ և հետաձգումներ", "Ժամանակացույցի սեղմում"], outputs_en: ["Work Performance Information", "Schedule Forecasts", "Change Requests", "PMP Updates", "Project Documents Updates"], outputs_am: ["Աշխատանքի կատարման վերաբերյալ տեղեկատվություն", "Ժամանակացույցի կանխատեսումներ", "Փոփոխությունների պահանջներ", "Նախագծի կառավարման պլանի թարմացումներ", "Նախագծի փաստաթղթերի թարմացումներ"] }] } },
                 { name: { en: "Cost Management", am: "Ծախսերի կառավարում" }, processes: { 1: [{ id: "4.1", en: "Plan Cost Management", am: "Ծախսերի կառավարման պլանավորում", inputs_en: ["Project Charter", "Project Management Plan", "EEFs", "OPAs"], inputs_am: ["Նախագծի մեկնարկային փաստաթուղթ", "Նախագծի կառավարման պլան", "EEFs", "OPAs"], tools_en: ["Expert Judgment", "Data Analysis", "Meetings"], tools_am: ["Փորձագիտական կարծիք", "Տվյալների վերլուծություն", "Հանդիպումներ"], outputs_en: ["Cost Management Plan"], outputs_am: ["Նախագծի ծախսերի կառավարման պլան"] }, { id: "4.2", en: "Estimate Costs", am: "Ծախսերի գնահատում", inputs_en: ["Project Management Plan", "Project Documents", "EEFs", "OPAs"], inputs_am: ["Նախագծի կառավարման պլան", "Նախագծի փաստաթղթեր", "EEFs", "OPAs"], tools_en: ["Expert Judgment", "Analogous Estimating", "Parametric Estimating", "Bottom-up Estimating", "Three-Point Estimating", "Data Analysis", "PMIS", "Decision Making"], tools_am: ["Փորձագիտական կարծիք", "Անալոգային գնահատում", "Պարամետրիկ գնահատում", "Ներքևից վերև գնահատում", "Երեք կետի գնահատում", "Տվյալների վերլուծություն", "Նախագծի կառավարման տեղեկատվական համակարգ", "Որոշումների կայացում"], outputs_en: ["Cost Estimates", "Basis of Estimates", "Project Documents Updates"], outputs_am: ["Ծախսերի գնահատում", "Գնահատումների հիմնավորումներ", "Նախագծի փաստաթղթերի փոփոխություններ"] }, { id: "4.3", en: "Determine Budget", am: "Բյուջեի կազմում", inputs_en: ["Project Management Plan", "Project Documents", "Business Documents", "Agreements", "EEFs", "OPAs"], inputs_am: ["Նախագծի կառավարման պլան", "Նախագծի փաստաթղթեր", "Բիզնես փաստաթղթեր", "Պայմանագրեր", "EEFs", "OPAs"], tools_en: ["Expert Judgment", "Cost Aggregation", "Data Analysis", "Historical Information Review", "Funding Limit Reconciliation", "Financing"], tools_am: ["Փորձագիտական կարծիք", "Ծախսերի համախմբում", "Տվյալների վերլուծություն", "Պատմական տվյալների վերլուծություն", "Ֆինանսավորման սահմանաչափի համադրում", "Ֆինանսավորում"], outputs_en: ["Cost Baseline", "Project Funding Requirements", "Project Documents Updates"], outputs_am: ["Ծախսերի բազային տարբերակ", "Նախագծի ֆինանսավորման պահանջներ", "Նախագծի փաստաթղթերի փոփոխություններ"] }], 3: [{ id: "4.4", en: "Control Costs", am: "Ծախսերի վերահսկում", inputs_en: ["Project Management Plan", "Project Documents", "Project Funding Requirements", "Work Performance Data", "OPAs"], inputs_am: ["Նախագծի կառավարման պլան", "Նախագծի փաստաթղթեր", "Նախագծի ֆինանսավորման պահանջներ", "Աշխատանքի կատարողականի տվյալներ", "OPAs"], tools_en: ["Expert Judgment", "Data Analysis", "To-Complete Performance Index (TCPI)", "PMIS"], tools_am: ["Փորձագիտական կարծիք", "Տվյալների վերլուծություն", "Կատարման համար անհրաժեշտ կատարողականի ինդեքս", "Նախագծի կառավարման տեղեկատվական համակարգ"], outputs_en: ["Work Performance Information", "Cost Forecasts", "Change Requests", "PMP Updates", "Project Documents Updates"], outputs_am: ["Աշխատանքի կատարման վերաբերյալ տեղեկատվություն", "Ծախսերի կանխատեսումներ", "Փոփոխությունների պահանջներ", "Նախագծի կառավարման պլանի թարմացումներ", "Նախագծի փաստաթղթերի թարմացումներ"] }] } },
                 { name: { en: "Quality Management", am: "Որակի կառավարում" }, processes: { 1: [{ id: "5.1", en: "Plan Quality Management", am: "Որակի կառավարման պլանավորում", outputs_en: ["Quality Management Plan", "Quality Metrics"], outputs_am: ["Որակի կառավարման պլան", "Որակի չափորոշիչներ"] }], 2: [{ id: "5.2", en: "Manage Quality", am: "Որակի կառավարում", outputs_en: ["Test and Evaluation Documents", "Change Requests"], outputs_am: ["Թեստավորման և գնահատման փաստաթղթեր", "Փոփոխության հարցումներ"] }], 3: [{ id: "5.3", en: "Control Quality", am: "Որակի վերահսկում", outputs_en: ["Verified Deliverables", "Quality Control Measurements"], outputs_am: ["Ստուգված արդյունքներ", "Որակի վերահսկման չափումներ"] }] } },
                 { name: { en: "Resource Management", am: "Ռեսուրսների կառավարում" }, processes: { 1: [{ id: "6.1", en: "Plan Resource Management", am: "Ռեսուրսների կառավարման պլանավորում", inputs_en: ["Project Charter", "Project Management Plan", "Project Documents", "EEFs", "OPAs"], inputs_am: ["Նախագծի մեկնարկային փաստաթուղթ", "Նախագծի կառավարման պլան", "Նախագծի փաստաթղթեր", "EEFs", "OPAs"], tools_en: ["Expert Judgment", "Data Representation", "Organizational Theory", "Meetings"], tools_am: ["Փորձագիտական կարծիք", "Տվյալների ներկայացում", "Կազմակերպչական տեսություն", "Հանդիպումներ"], outputs_en: ["Resource Management Plan", "Team Charter", "Project Documents Updates"], outputs_am: ["Ռեսուրսների կառավարման պլան", "Թիմի կանոնադրություն", "Նախագծի փաստաթղթերի փոփոխություններ"] }, { id: "6.2", en: "Estimate Activity Resources", am: "Անհրաժեշտ ռեսուրսների գնահատում", inputs_en: ["Project Management Plan", "Project Documents", "EEFs", "OPAs"], inputs_am: ["Նախագծի կառավարման պլան", "Նախագծի փաստաթղթեր", "EEFs", "OPAs"], tools_en: ["Expert Judgment", "Bottom-up Estimating", "Analogous Estimating", "Parametric Estimating", "Data Analysis", "PMIS", "Meetings"], tools_am: ["Փորձագիտական կարծիք", "Ներքևից վերև գնահատում", "Անալոգային գնահատում", "Պարամետրիկ գնահատում", "Տվյալների վերլուծություն", "Նախագծի կառավարման տեղեկատվական համակարգ", "Հանդիպումներ"], outputs_en: ["Resource Requirements", "Basis of Estimates", "Resource Breakdown Structure", "Project Documents Updates"], outputs_am: ["Ռեսուրսների պահանջներ", "Գնահատումների հիմնավորումներ", "Ռեսուրսների բաշխման կառուցվածք", "Նախագծի փաստաթղթերի փոփոխություններ"] }], 2: [{ id: "6.3", en: "Acquire Resources", am: "Ռեսուրսների հավաքագրում", inputs_en: ["Project Management Plan", "Project Documents", "EEFs", "OPAs"], inputs_am: ["Նախագծի կառավարման պլան", "Նախագծի փաստաթղթեր", "EEFs", "OPAs"], tools_en: ["Decision Making", "Interpersonal and Team Skills", "Pre-assignment", "Virtual Teams"], tools_am: ["Որոշումների կայացում", "Միջանձնային և թիմային հմտություններ", "Նախանշանակում", "Վիրտուալ թիմեր"], outputs_en: ["Physical Resource Assignments", "Project Team Assignments", "Resource Calendars", "Change Requests", "PMP Updates", "Project Documents Updates", "EEF Updates", "OPA Updates"], outputs_am: ["Ֆիզիկական ռեսուրսների բաշխվածություն", "Նախագծի թիմի բաշխվածություն", "Ռեսուրսների օրացույցներ", "Փոփոխությունների պահանջներ", "Նախագծի կառավարման պլանի փոփոխություններ", "Նախագծի փաստաթղթերի փոփոխություններ", "EEFs-ի փոփոխություններ", "OPAs-ի փոփոխություններ"] }, { id: "6.4", en: "Develop Team", am: "Թիմի զարգացում", inputs_en: ["Project Management Plan", "Project Documents", "EEFs", "OPAs"], inputs_am: ["Նախագծի կառավարման պլան", "Նախագծի փաստաթղթեր", "EEFs", "OPAs"], tools_en: ["Colocation", "Virtual Teams", "Communication Technology", "Interpersonal and Team Skills", "Recognition and Rewards", "Training", "Individual and Team Assessments", "Meetings"], tools_am: ["Համատեղ տեղակայում (Colocation)", "Վիրտուալ թիմեր", "Հաղորդակցման տեխնոլոգիաներ", "Միջանձնային և թիմային հմտություններ", "Ճանաչում և պարգևատրում", "Ուսուցում", "Անհատական և թիմային գնահատումներ", "Հանդիպումներ"], outputs_en: ["Team Performance Assessments", "Change Requests", "PMP Updates", "Project Documents Updates", "EEF Updates", "OPA Updates"], outputs_am: ["Թիմի աշխատանքի գնահատումներ", "Փոփոխությունների պահանջներ", "Նախագծի կառավարման պլանի փոփոխություններ", "Նախագծի փաստաթղթերի փոփոխություններ", "EEFs-ի փոփոխություններ", "OPAs-ի փոփոխություններ"] }, { id: "6.5", en: "Manage Team", am: "Թիմի կառավարում", inputs_en: ["Project Management Plan", "Project Documents", "Work Performance Reports", "Team Performance Assessments", "EEFs", "OPAs"], inputs_am: ["Նախագծի կառավարման պլան", "Նախագծի փաստաթղթեր", "Աշխատանքի կատարողականի հաշվետվություններ", "Թիմի աշխատանքի գնահատումներ", "EEFs", "OPAs"], tools_en: ["Interpersonal and Team Skills", "PMIS"], tools_am: ["Միջանձնային և թիմային հմտություններ", "Նախագծի կառավարման տեղեկատվական համակարգ"], outputs_en: ["Change Requests", "PMP Updates", "Project Documents Updates", "EEF Updates"], outputs_am: ["Փոփոխությունների պահանջներ", "Նախագծի կառավարման պլանի փոփոխություններ", "Նախագծի փաստաթղթերի փոփոխություններ", "EEFs-ի փոփոխություններ"] }], 3: [{ id: "6.6", en: "Control Resources", am: "Ռեսուրսների վերահսկում", inputs_en: ["Project Management Plan", "Project Documents", "Work Performance Data", "Agreements", "OPAs"], inputs_am: ["Նախագծի կառավարման պլան", "Նախագծի փաստաթղթեր", "Աշխատանքի կատարողականի տվյալներ", "Պայմանագրեր", "OPAs"], tools_en: ["Data Analysis", "Problem Solving", "Interpersonal and Team Skills", "PMIS"], tools_am: ["Տվյալների վերլուծություն", "Խնդիրների լուծում", "Միջանձնային և թիմային հմտություններ", "Նախագծի կառավարման տեղեկատվական համակարգ"], outputs_en: ["Work Performance Information", "Change Requests", "PMP Updates", "Project Documents Updates"], outputs_am: ["Աշխատանքի կատարման վերաբերյալ տեղեկատվություն", "Փոփոխությունների պահանջներ", "Նախագծի կառավարման պլանի փոփոխություններ", "Նախագծի փաստաթղթերի փոփոխություններ"] }] } },
                 { name: { en: "Communications Management", am: "Հաղորդակցության կառավարում" }, processes: { 1: [{ id: "7.1", en: "Plan Communications Management", am: "Հաղորդակցության կառավարման պլանավորում", inputs_en: ["Project Charter", "Project Management Plan", "Project Documents", "EEFs", "OPAs"], inputs_am: ["Նախագծի մեկնարկային փաստաթուղթ", "Նախագծի կառավարման պլան", "Նախագծի փաստաթղթեր", "EEFs", "OPAs"], tools_en: ["Expert Judgment", "Communication Requirements Analysis", "Communication Technology", "Communication Models", "Communication Methods", "Interpersonal and Team Skills", "Data Representation", "Meetings"], tools_am: ["Փորձագիտական կարծիք", "Հաղորդակցման պահանջների վերլուծություն", "Հաղորդակցման տեխնոլոգիաներ", "Հաղորդակցման մոդելներ", "Հաղորդակցման մեթոդներ", "Միջանձնային և թիմային հմտություններ", "Տվյալների ներկայացում", "Հանդիպումներ"], outputs_en: ["Communications Management Plan", "PMP Updates", "Project Documents Updates"], outputs_am: ["Հաղորդակցության կառավարման պլան", "Նախագծի կառավարման պլանի փոփոխություններ", "Նախագծի փաստաթղթերի փոփոխություններ"] }], 2: [{ id: "7.2", en: "Manage Communications", am: "Հաղորդակցությունների կառավարում", inputs_en: ["Project Management Plan", "Project Documents", "Work Performance Reports", "EEFs", "OPAs"], inputs_am: ["Նախագծի կառավարման պլան", "Նախագծի փաստաթղթեր", "Աշխատանքի կատարողականի հաշվետվություններ", "EEFs", "OPAs"], tools_en: ["Communication Technology", "Communication Methods", "Communication Skills", "PMIS", "Project Reporting", "Interpersonal and Team Skills", "Meetings"], tools_am: ["Հաղորդակցման տեխնոլոգիաներ", "Հաղորդակցման մեթոդներ", "Հաղորդակցման հմտություններ", "Նախագծի կառավարման տեղեկատվական համակարգ", "Նախագծի հաշվետվողականություն", "Միջանձնային և թիմային հմտություններ", "Հանդիպումներ"], outputs_en: ["Project Communications", "PMP Updates", "Project Documents Updates", "OPA Updates"], outputs_am: ["Նախագծի հաղորդակցություններ", "Նախագծի կառավարման պլանի փոփոխություններ", "Նախագծի փաստաթղթերի փոփոխություններ", "OPAs-ի փոփոխություններ"] }], 3: [{ id: "7.3", en: "Monitor Communications", am: "Հաղորդակցությունների մոնիթորինգ", inputs_en: ["Project Management Plan", "Project Documents", "Work Performance Data", "EEFs", "OPAs"], inputs_am: ["Նախագծի կառավարման պլան", "Նախագծի փաստաթղթեր", "Աշխատանքի կատարողականի տվյալներ", "EEFs", "OPAs"], tools_en: ["Expert Judgment", "PMIS", "Data Analysis", "Interpersonal and Team Skills", "Meetings"], tools_am: ["Փորձագիտական կարծիք", "Նախագծի կառավարման տեղեկատվական համակարգ", "Տվյալների վերլուծություն", "Միջանձնային և թիմային հմտություններ", "Հանդիպումներ"], outputs_en: ["Work Performance Information", "Change Requests", "PMP Updates", "Project Documents Updates"], outputs_am: ["Աշխատանքի կատարման վերաբերյալ տեղեկատվություն", "Փոփոխությունների պահանջներ", "Նախագծի կառավարման պլանի փոփոխություններ", "Նախագծի փաստաթղթերի փոփոխություններ"] }] } },
-                { name: { en: "Risk Management", am: "Ռիսկերի կառավարում" }, processes: { 1: [{ id: "8.1", en: "Plan Risk Management", am: "Ռիսկերի կառավարման պլանավորում", outputs_en: ["Risk Management Plan"], outputs_am: ["Ռիսկերի կառավարման պլան"] }], 2: [{ id: "8.6", en: "Implement Risk Responses", am: "Ռիսկերին արձագանքման իրականացում", outputs_en: ["Change Requests"], outputs_am: ["Փոփոխության հարցումներ"] }], 3: [{ id: "8.7", en: "Monitor Risks", am: "Ռիսկերի մոնիթորինգ", outputs_en: ["Work Performance Information", "Updated Risk Register"], outputs_am: ["Աշխատանքի կատարման տեղեկատվություն", "Թարմացված ռիսկերի գրանցամատյան"] }] } },
+                { name: { en: "Risk Management", am: "Ռիսկերի կառավարում" }, processes: { 1: [{ id: "8.1", en: "Plan Risk Management", am: "Ռիսկերի կառավարման պլանավորում", inputs_en: ["Project Charter", "Project Management Plan", "Project Documents", "EEFs", "OPAs"], inputs_am: ["Նախագծի մեկնարկային փաստաթուղթ", "Նախագծի կառավարման պլան", "Նախագծի փաստաթղթեր", "EEFs", "OPAs"], tools_en: ["Expert Judgment", "Data Analysis", "Meetings"], tools_am: ["Փորձագիտական կարծիք", "Տվյալների վերլուծություն", "Հանդիպումներ"], outputs_en: ["Risk Management Plan"], outputs_am: ["Ռիսկերի կառավարման պլան"] }, { id: "8.2", en: "Identify Risks", am: "Ռիսկերի բացահայտում/նույնականացում", inputs_en: ["Project Management Plan", "Project Documents", "Agreements", "Procurement Documentation", "EEFs", "OPAs"], inputs_am: ["Նախագծի կառավարման պլան", "Նախագծի փաստաթղթեր", "Պայմանագրեր", "Գնումների փաստաթղթեր", "EEFs", "OPAs"], tools_en: ["Expert Judgment", "Data Gathering", "Data Analysis", "Interpersonal and Team Skills", "Prompt Lists", "Meetings"], tools_am: ["Փորձագիտական կարծիք", "Տվյալների հավաքագրում", "Տվյալների վերլուծություն", "Միջանձնային և թիմային հմտություններ", "Հուշող ցուցակներ", "Հանդիպումներ"], outputs_en: ["Risk Register", "Risk Report", "Project Documents Updates"], outputs_am: ["Ռիսկերի գրանցամատյան", "Ռիսկերի զեկույց", "Նախագծի փաստաթղթերի փոփոխություններ"] }, { id: "8.3", en: "Perform Qualitative Risk Analysis", am: "Ռիսկերի որակական վերլուծության իրականացում", inputs_en: ["Project Management Plan", "Project Documents", "EEFs", "OPAs"], inputs_am: ["Նախագծի կառավարման պլան", "Նախագծի փաստաթղթեր", "EEFs", "OPAs"], tools_en: ["Expert Judgment", "Data Gathering", "Data Analysis", "Interpersonal and Team Skills", "Risk Categorization", "Data Representation", "Meetings"], tools_am: ["Փորձագիտական կարծիք", "Տվյալների հավաքագրում", "Տվյալների վերլուծություն", "Միջանձնային և թիմային հմտություններ", "Ռիսկերի դասակարգում", "Տվյալների ներկայացում", "Հանդիպումներ"], outputs_en: ["Project Documents Updates"], outputs_am: ["Նախագծի փաստաթղթերի փոփոխություններ"] }, { id: "8.4", en: "Perform Quantitative Risk Analysis", am: "Ռիսկերի քանակական վերլուծության իրականացում", inputs_en: ["Project Management Plan", "Project Documents", "EEFs", "OPAs"], inputs_am: ["Նախագծի կառավարման պլան", "Նախագծի փաստաթղթեր", "EEFs", "OPAs"], tools_en: ["Expert Judgment", "Data Gathering", "Interpersonal and Team Skills", "Representations of Uncertainty", "Data Analysis"], tools_am: ["Փորձագիտական կարծիք", "Տվյալների հավաքագրում", "Միջանձնային և թիմային հմտություններ", "Անորոշությունների ներկայացում", "Տվյալների վերլուծություն"], outputs_en: ["Project Documents Updates"], outputs_am: ["Նախագծի փաստաթղթերի փոփոխություններ"] }, { id: "8.5", en: "Plan Risk Responses", am: "Ռիսկերի պատասխան գործողությունների պլանավորում", inputs_en: ["Project Management Plan", "Project Documents", "EEFs", "OPAs"], inputs_am: ["Նախագծի կառավարման պլան", "Նախագծի փաստաթղթեր", "EEFs", "OPAs"], tools_en: ["Expert Judgment", "Data Gathering", "Interpersonal and Team Skills", "Strategies for Threats", "Strategies for Opportunities", "Contingent Response Strategies", "Strategies for Overall Project Risk", "Data Analysis", "Decision Making"], tools_am: ["Փորձագիտական կարծիք", "Տվյալների հավաքագրում", "Միջանձնային և թիմային հմտություններ", "Սպառնալիքներին արձագանքման ռազմավարություններ", "Հնարավորություններին արձագանքման ռազմավարություններ", "Պայմանական պատասխան ռազմավարություններ", "Ընդհանուր նախագծային ռիսկի ռազմավարություններ", "Տվյալների վերլուծություն", "Որոշումների կայացում"], outputs_en: ["Change Requests", "PMP Updates", "Project Documents Updates"], outputs_am: ["Փոփոխությունների հարցումներ", "Նախագծի կառավարման պլանի թարմացումներ", "Նախագծի փաստաթղթերի փոփոխություններ"] }], 2: [{ id: "8.6", en: "Implement Risk Responses", am: "Ռիսկերի պատասխան գործողությունների իրականացում", inputs_en: ["Project Management Plan", "Project Documents", "OPAs"], inputs_am: ["Նախագծի կառավարման պլան", "Նախագծի փաստաթղթեր", "OPAs"], tools_en: ["Expert Judgment", "Interpersonal and Team Skills", "PMIS"], tools_am: ["Փորձագիտական կարծիք", "Միջանձնային և թիմային հմտություններ", "Նախագծի կառավարման տեղեկատվական համակարգ"], outputs_en: ["Change Requests", "Project Documents Updates"], outputs_am: ["Փոփոխությունների հարցումներ", "Նախագծի փաստաթղթերի փոփոխություններ"] }], 3: [{ id: "8.7", en: "Monitor Risks", am: "Ռիսկերի մոնիթորինգ", inputs_en: ["Project Management Plan", "Project Documents", "Work Performance Data", "Work Performance Reports"], inputs_am: ["Նախագծի կառավարման պլան", "Նախագծի փաստաթղթեր", "Աշխատանքի կատարողականի տվյալներ", "Աշխատանքի կատարողականի հաշվետվություններ"], tools_en: ["Data Analysis", "Risk Reassessment", "Audits", "Meetings"], tools_am: ["Տվյալների վերլուծություն", "Ռիսկերի վերագնահատում", "Աուդիտ", "Հանդիպումներ"], outputs_en: ["Work Performance Information", "Change Requests", "PMP Updates", "Project Documents Updates", "OPA Updates"], outputs_am: ["Աշխատանքի կատարման վերաբերյալ տեղեկատվություն", "Փոփոխությունների հարցումներ", "Նախագծի կառավարման պլանի փոփոխություններ", "Նախագծի փաստաթղթերի փոփոխություններ", "OPAs-ի փոփոխություններ"] }] } },
                 { name: { en: "Procurement Management", am: "Գնումների կառավարում" }, processes: { 1: [{ id: "9.1", en: "Plan Procurement Management", am: "Գնումների կառավարման պլանավորում", outputs_en: ["Procurement Management Plan", "Bid Documents"], outputs_am: ["Գնումների կառավարման պլան", "Մրցութային փաստաթղթեր"] }], 2: [{ id: "9.2", en: "Conduct Procurements", am: "Գնումների իրականացում", outputs_en: ["Selected Sellers", "Agreements"], outputs_am: ["Ընտրված մատակարարներ", "Պայմանագրեր"] }], 3: [{ id: "9.3", en: "Control Procurements", am: "Գնումների վերահսկում", outputs_en: ["Closed Procurements", "Work Performance Information"], outputs_am: ["Փակված գնումներ", "Աշխատանքի կատարման տեղեկատվություն"] }] } },
                 { name: { en: "Stakeholder Management", am: "Շահակիցների կառավարում" }, processes: { 0: [{ id: "10.1", en: "Identify Stakeholders", am: "Շահակիցների բացահայտում", inputs_en: ["Project Charter", "Business Documents", "Project Management Plan", "Project Documents", "Agreements", "Enterprise Environmental Factors", "Organizational Process Assets"], inputs_am: ["Նախագծի մեկնարկային փաստաթուղթ", "Բիզնես փաստաթղթեր", "Նախագծի կառավարման պլան", "Նախագծի փաստաթղթեր", "Պայմանագրեր", "EEFs", "OPAs"], tools_en: ["Expert Judgment", "Data Gathering", "Data Analysis", "Data Representation", "Meetings"], tools_am: ["Փորձագիտական կարծիք", "Տվյալների հավաքագրում", "Տվյալների վերլուծություն", "Տվյալների ներկայացում", "Հանդիպումներ"], outputs_en: ["Stakeholder Register", "Change Requests", "Project Management Plan Updates", "Project Documents Updates"], outputs_am: ["Շահակիցների գրանցամատյան", "Փոփոխությունների պահանջներ", "Նախագծի կառավարման պլանի փոփոխություններ", "Նախագծի փաստաթղթերի փոփոխություններ"] }], 1: [{ id: "10.2", en: "Plan Stakeholder Engagement", am: "Շահակիցների ներգրավման պլանավորում", inputs_en: ["Project Charter", "Project Management Plan", "Project Documents", "Agreements", "Enterprise Environmental Factors", "Organizational Process Assets"], inputs_am: ["Նախագծի մեկնարկային փաստաթուղթ", "Նախագծի կառավարման պլան", "Նախագծի փաստաթղթեր", "Պայմանագրեր", "EEFs", "OPAs"], tools_en: ["Expert Judgment", "Data Gathering", "Data Analysis", "Decision Making", "Data Representation", "Meetings"], tools_am: ["Փորձագիտական կարծիք", "Տվյալների հավաքագրում", "Տվյալների վերլուծություն", "Որոշումների կայացում", "Տվյալների ներկայացում", "Հանդիպումներ"], outputs_en: ["Stakeholder Engagement Plan"], outputs_am: ["Շահակիցների ներգրավման պլան"] }], 2: [{ id: "10.3", en: "Manage Stakeholder Engagement", am: "Շահակիցների ներգրավման կառավարում", inputs_en: ["Project Management Plan", "Project Documents", "Enterprise Environmental Factors", "Organizational Process Assets"], inputs_am: ["Նախագծի կառավարման պլան", "Նախագծի փաստաթղթեր", "EEFs", "OPAs"], tools_en: ["Expert Judgment", "Communication Skills", "Interpersonal and Team Skills", "Ground Rules", "Meetings"], tools_am: ["Փորձագիտական կարծիք", "Հաղորդակցման հմտություններ", "Միջանձնային և թիմային հմտություններ", "Հիմնական կանոններ", "Հանդիպումներ"], outputs_en: ["Change Requests", "Project Management Plan Updates", "Project Documents Updates"], outputs_am: ["Փոփոխությունների պահանջներ", "Նախագծի կառավարման պլանի թարմացումներ", "Նախագծի փաստաթղթերի թարմացումներ"] }], 3: [{ id: "10.4", en: "Monitor Stakeholder Engagement", am: "Շահակիցների ներգրավման մոնիթորինգ", inputs_en: ["Project Management Plan", "Project Documents", "Work Performance Data", "Enterprise Environmental Factors", "Organizational Process Assets"], inputs_am: ["Նախագծի կառավարման պլան", "Նախագծի փաստաթղթեր", "Աշխատանքի կատարողական տվյալներ", "EEFs", "OPAs"], tools_en: ["Data Analysis", "Decision Making", "Data Representation", "Communication Skills", "Interpersonal and Team Skills", "Meetings"], tools_am: ["Տվյալների վերլուծություն", "Որոշումների կայացում", "Տվյալների ներկայացում", "Հաղորդակցման հմտություններ", "Միջանձնային և թիմային հմտություններ", "Հանդիպումներ"], outputs_en: ["Work Performance Information", "Change Requests", "Project Management Plan Updates", "Project Documents Updates"], outputs_am: ["Աշխատանքի կատարման վերաբերյալ տեղեկատվություն", "Փոփոխությունների պահանջներ", "Նախագծի կառավարման պլանի թարմացումներ", "Նախագծի փաստաթղթերի թարմացումներ"] }] } }
             ]
         };
-
-        // --- DOM ELEMENTS ---
+        
+        // --- DOM ELEMENTS & STATE ---
         const gridContainer = document.getElementById('pmbokGrid');
         const languageToggle = document.getElementById('languageToggle');
         const searchInput = document.getElementById('searchInput');
+        const modeToggle = document.getElementById('modeToggle');
         const modal = document.getElementById('aiModal');
         const modalTitle = document.getElementById('modalTitle');
         const modalContent = document.getElementById('modalContent');
@@ -253,13 +182,40 @@
         const generateItoBtn = document.getElementById('generateItoBtn');
         const generateExampleBtn = document.getElementById('generateExampleBtn');
         const closeModalBtn = document.getElementById('closeModalBtn');
+        const previewControls = document.getElementById('previewControls');
+        const subtitle = document.getElementById('subtitle');
 
-        // --- STATE ---
         let currentLang = 'am';
+        let isEditMode = false;
         let selectedProcess = null;
+        let userPmbokData = {}; // To store user's edits
 
         // --- FUNCTIONS ---
+
+        function initializeUserPmbokData() {
+            userPmbokData = {
+                processGroups: pmbokData.processGroups.am.map(() => ""),
+                knowledgeAreas: pmbokData.knowledgeAreas.map(ka => ({
+                    name: "",
+                    processes: Object.keys(ka.processes).reduce((acc, key) => {
+                        acc[key] = ka.processes[key].map(p => ({
+                            id: p.id,
+                            name: "",
+                            inputs: "",
+                            tools: "",
+                            outputs: ""
+                        }));
+                        return acc;
+                    }, {})
+                }))
+            };
+        }
+        
         function renderGrid() {
+            isEditMode ? renderEditGrid() : renderPreviewGrid();
+        }
+
+        function renderPreviewGrid() {
             const lang = currentLang;
             const searchTerm = searchInput.value.toLowerCase();
             gridContainer.innerHTML = '';
@@ -298,37 +254,15 @@
                             const toolsHTML = tools.map(item => `<li>${item}</li>`).join('');
                             const outputsHTML = outputs.map(item => `<li>${item}</li>`).join('');
                             dropdownHTML = `
-                                <div class="ito-section">
-                                    <h4 class="ito-header">${lang === 'am' ? '1. Մուտքեր' : '1. Inputs'}</h4>
-                                    <ul class="outputs-list">${inputsHTML}</ul>
-                                </div>
-                                <div class="ito-section">
-                                    <h4 class="ito-header">${lang === 'am' ? '2. Գործիքներ և Մեթոդներ' : '2. Tools & Techniques'}</h4>
-                                    <ul class="outputs-list">${toolsHTML}</ul>
-                                </div>
-                                <div class="ito-section">
-                                    <h4 class="ito-header">${lang === 'am' ? '3. Ելքեր' : '3. Outputs'}</h4>
-                                    <ul class="outputs-list">${outputsHTML}</ul>
-                                </div>
-                            `;
+                                <div class="ito-section"><h4 class="ito-header">${lang === 'am' ? '1. Մուտքեր' : '1. Inputs'}</h4><ul class="outputs-list">${inputsHTML}</ul></div>
+                                <div class="ito-section"><h4 class="ito-header">${lang === 'am' ? '2. Գործիքներ և Մեթոդներ' : '2. Tools & Techniques'}</h4><ul class="outputs-list">${toolsHTML}</ul></div>
+                                <div class="ito-section"><h4 class="ito-header">${lang === 'am' ? '3. Ելքեր' : '3. Outputs'}</h4><ul class="outputs-list">${outputsHTML}</ul></div>`;
                         } else if (outputs) {
                             const outputsHTML = outputs.map(item => `<li>${item}</li>`).join('');
                             dropdownHTML = `<div class="ito-section"><ul class="outputs-list">${outputsHTML}</ul></div>`;
                         }
 
-                        cellHTML += `
-                            <div class="process-item">
-                                <div class="process-header" data-process-id="${p.id}" data-process-en="${p.en}" data-process-am="${p.am}">
-                                    <span class="process-title">
-                                        <span class="process-number">${p.id}</span>
-                                        <span>${processName}</span>
-                                    </span>
-                                    <span class="info-btn">i</span>
-                                </div>
-                                <div class="outputs-container">
-                                    ${dropdownHTML}
-                                </div>
-                            </div>`;
+                        cellHTML += `<div class="process-item"><div class="process-header" data-process-id="${p.id}" data-process-en="${p.en}" data-process-am="${p.am}"><span class="process-title"><span class="process-number">${p.id}</span><span>${processName}</span></span><span class="info-btn">i</span></div><div class="outputs-container">${dropdownHTML}</div></div>`;
                     });
                     cell.innerHTML = cellHTML;
                     gridContainer.appendChild(cell);
@@ -336,52 +270,166 @@
             });
         }
 
+        function renderEditGrid() {
+            gridContainer.innerHTML = '';
+            gridContainer.appendChild(document.createElement('div'));
+            
+            userPmbokData.processGroups.forEach((pg, index) => {
+                const headerCell = document.createElement('div');
+                headerCell.className = 'grid-header';
+                const textarea = createEditable(pg, `Process Group ${index + 1}`, ['header-editable']);
+                textarea.dataset.type = 'processGroup';
+                textarea.dataset.index = index;
+                headerCell.appendChild(textarea);
+                gridContainer.appendChild(headerCell);
+            });
+
+            userPmbokData.knowledgeAreas.forEach((ka, kaIndex) => {
+                const kaHeader = document.createElement('div');
+                kaHeader.className = 'ka-header';
+                const textarea = createEditable(ka.name, `Knowledge Area ${kaIndex + 1}`, ['header-editable']);
+                textarea.dataset.type = 'kaName';
+                textarea.dataset.kaIndex = kaIndex;
+                kaHeader.appendChild(textarea);
+                gridContainer.appendChild(kaHeader);
+
+                for (let i = 0; i < 5; i++) {
+                    const cell = document.createElement('div');
+                    cell.className = 'grid-cell';
+                    cell.setAttribute('data-process-group', userPmbokData.processGroups[i] || `Process Group ${i + 1}`);
+                    const processes = ka.processes[i] || [];
+                    
+                    processes.forEach(p => {
+                        const item = document.createElement('div');
+                        item.className = 'process-item';
+                        const header = document.createElement('div');
+                        header.className = 'process-header';
+                        const titleTextarea = createEditable(p.name, `${p.id} Process Name`, ['process-title-editable']);
+                        titleTextarea.dataset.type = 'processName';
+                        titleTextarea.dataset.kaIndex = kaIndex;
+                        titleTextarea.dataset.pgIndex = i;
+                        titleTextarea.dataset.pId = p.id;
+                        header.appendChild(titleTextarea);
+                        
+                        const content = document.createElement('div');
+                        content.className = 'outputs-container open';
+                        
+                        const inputsTextarea = createEditable(p.inputs, 'List inputs...', ['ito-editable']);
+                        inputsTextarea.dataset.type = 'inputs';
+                        inputsTextarea.dataset.kaIndex = kaIndex;
+                        inputsTextarea.dataset.pgIndex = i;
+                        inputsTextarea.dataset.pId = p.id;
+
+                        const toolsTextarea = createEditable(p.tools, 'List tools & techniques...', ['ito-editable']);
+                        toolsTextarea.dataset.type = 'tools';
+                        toolsTextarea.dataset.kaIndex = kaIndex;
+                        toolsTextarea.dataset.pgIndex = i;
+                        toolsTextarea.dataset.pId = p.id;
+
+                        const outputsTextarea = createEditable(p.outputs, 'List outputs...', ['ito-editable']);
+                        outputsTextarea.dataset.type = 'outputs';
+                        outputsTextarea.dataset.kaIndex = kaIndex;
+                        outputsTextarea.dataset.pgIndex = i;
+                        outputsTextarea.dataset.pId = p.id;
+
+                        content.innerHTML = `<div class="ito-section"><h4 class="ito-header">1. Inputs</h4></div>
+                                           <div class="ito-section"><h4 class="ito-header">2. Tools & Techniques</h4></div>
+                                           <div class="ito-section"><h4 class="ito-header">3. Outputs</h4></div>`;
+                        content.children[0].appendChild(inputsTextarea);
+                        content.children[1].appendChild(toolsTextarea);
+                        content.children[2].appendChild(outputsTextarea);
+                        
+                        item.appendChild(header);
+                        item.appendChild(content);
+                        cell.appendChild(item);
+                    });
+                    gridContainer.appendChild(cell);
+                }
+            });
+            
+            document.querySelectorAll('.editable-area').forEach(textarea => {
+                textarea.addEventListener('input', handleUserEdit);
+                textarea.dispatchEvent(new Event('input'));
+            });
+        }
+        
+        function createEditable(value, placeholder, classList = []) {
+            const textarea = document.createElement('textarea');
+            textarea.value = value;
+            textarea.placeholder = placeholder;
+            textarea.className = 'editable-area ' + classList.join(' ');
+            textarea.rows = 1;
+            return textarea;
+        }
+
+        function autoResizeTextarea(event) {
+            const textarea = event.target;
+            textarea.style.height = 'auto';
+            textarea.style.height = (textarea.scrollHeight) + 'px';
+        }
+
+        function handleUserEdit(event) {
+            autoResizeTextarea(event);
+            const el = event.target;
+            const { type, kaIndex, pgIndex, pId, index } = el.dataset;
+
+            if (type === 'processGroup') {
+                userPmbokData.processGroups[index] = el.value;
+            } else if (type === 'kaName') {
+                userPmbokData.knowledgeAreas[kaIndex].name = el.value;
+            } else {
+                const process = userPmbokData.knowledgeAreas[kaIndex].processes[pgIndex].find(p => p.id === pId);
+                if (process) {
+                    if (type === 'processName') process.name = el.value;
+                    else if (type === 'inputs') process.inputs = el.value;
+                    else if (type === 'tools') process.tools = el.value;
+                    else if (type === 'outputs') process.outputs = el.value;
+                }
+            }
+        }
+
         function switchLanguage() {
             currentLang = languageToggle.checked ? 'en' : 'am';
             document.querySelectorAll('[data-lang-en]').forEach(el => {
                 el.textContent = el.getAttribute(`data-lang-${currentLang}`);
             });
-            searchInput.placeholder = currentLang === 'en' ? 'Search processes...' : 'Որոնել գործընթացներ...';
+            searchInput.placeholder = currentLang === 'en' ? 'Search...' : 'Որոնել...';
+            if (!isEditMode) renderGrid();
+        }
+
+        function switchMode() {
+            isEditMode = modeToggle.checked;
+            previewControls.style.display = isEditMode ? 'none' : 'flex';
+            const sub = isEditMode ? "Fill in the chart with your own notes." : (currentLang === 'am' ? "Սեղմեք պրոցեսի վրա՝ արդյունքները տեսնելու համար։" : "Click on a process to see its outputs.");
+            subtitle.textContent = sub;
             renderGrid();
         }
 
         function handleGridClick(e) {
+            if (isEditMode) return;
             const infoBtn = e.target.closest('.info-btn');
             const processHeader = e.target.closest('.process-header');
-
             if (infoBtn) {
                 e.stopPropagation();
                 openModal(infoBtn.parentElement);
             } else if (processHeader) {
-                const outputsContainer = processHeader.nextElementSibling;
-                outputsContainer.classList.toggle('open');
+                processHeader.nextElementSibling.classList.toggle('open');
             }
         }
 
         function openModal(processElement) {
             if (!processElement) return;
-            selectedProcess = {
-                en: processElement.dataset.processEn,
-                am: processElement.dataset.processAm,
-                id: processElement.dataset.processId
-            };
+            selectedProcess = { en: processElement.dataset.processEn, am: processElement.dataset.processAm, id: processElement.dataset.processId };
             modalTitle.textContent = `${selectedProcess.id} - ${selectedProcess[currentLang]}`;
             modalContent.innerHTML = `<p class="text-gray-500 text-center">Ընտրեք գործողություններից մեկը՝ AI-ի օգնությամբ տեղեկություն ստանալու համար։</p>`;
-            modalContent.classList.remove('hidden');
-            modalLoading.classList.add('hidden');
             modal.classList.remove('hidden');
-            setTimeout(() => {
-                modal.classList.remove('opacity-0');
-                modal.classList.add('pointer-events-auto');
-            }, 10);
+            setTimeout(() => { modal.classList.remove('opacity-0'); modal.classList.add('pointer-events-auto'); }, 10);
         }
 
         function closeModal() {
             modal.classList.add('opacity-0');
             modal.classList.remove('pointer-events-auto');
-            setTimeout(() => {
-                modal.classList.add('hidden');
-            }, 300);
+            setTimeout(() => { modal.classList.add('hidden'); }, 300);
         }
 
         async function callGeminiAPI(prompt) {
@@ -393,22 +441,15 @@
             const apiKey = "";
             const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
             try {
-                const response = await fetch(apiUrl, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(payload)
-                });
-                if (!response.ok) throw new Error(`API request failed with status ${response.status}`);
+                const response = await fetch(apiUrl, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+                if (!response.ok) throw new Error(`API request failed`);
                 const result = await response.json();
                 if (result.candidates && result.candidates[0]?.content?.parts[0]) {
-                    const text = result.candidates[0].content.parts[0].text;
-                    modalContent.innerHTML = text.replace(/\n/g, '<br>');
-                } else {
-                    throw new Error("Invalid response structure from API.");
-                }
+                    modalContent.innerHTML = result.candidates[0].content.parts[0].text.replace(/\n/g, '<br>');
+                } else { throw new Error("Invalid response structure"); }
             } catch (error) {
                 console.error("Gemini API Error:", error);
-                modalContent.innerHTML = `<p class="text-red-500">Սխալ տեղի ունեցավ։ Խնդրում ենք փորձել մի փոքր ուշ։</p>`;
+                modalContent.innerHTML = `<p class="text-red-500">Error fetching explanation. Please try again later.</p>`;
             } finally {
                 modalLoading.classList.add('hidden');
                 modalContent.classList.remove('hidden');
@@ -432,6 +473,7 @@
 
         // --- EVENT LISTENERS ---
         languageToggle.addEventListener('change', switchLanguage);
+        modeToggle.addEventListener('change', switchMode);
         searchInput.addEventListener('input', renderGrid);
         gridContainer.addEventListener('click', handleGridClick);
         closeModalBtn.addEventListener('click', closeModal);
@@ -440,8 +482,9 @@
         generateItoBtn.addEventListener('click', getGeminiIto);
         generateExampleBtn.addEventListener('click', getGeminiExample);
 
-        // --- INITIAL RENDER ---
-        switchLanguage();
+        // --- INITIAL SETUP ---
+        initializeUserPmbokData();
+        switchLanguage(); // Renders initial preview grid
     </script>
 </body>
 </html>
